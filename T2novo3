@@ -41,16 +41,15 @@ sw    $ra, 0($sp)
 lw $s0, NUM 
 mul $s0, $s0, 44
 sub $s0, $s0, 44 #coloca no início  da ultima linha
-la $t0, -44 #contador das linhas, vai até $s0
+li $t0, 0 #contador das linhas, vai até $s0
 
-
-#Arrumar nona e décima posição
-addi $t2, $t0, 32 #9
-addi $t3, $t0, 36 #10
 
 loopMain:
-addi $t0, $t0, 44 #vai para a próxima linha
 addi $t1, $t0, 44 #final da linha a ser percorrida
+
+#Arrumar nona e décima posição
+addi $t2, $t0, 32
+addi $t3, $t0, 36
 lw $a0, CPF($t2)
 lw $a1, CPF($t3)
 
@@ -59,19 +58,21 @@ move $s1,$v0
 jal dig_2
 move $s2,$v0
 
-bne $s1,$a0,loopMain
-bne $s2,$a1,loopMain
+bne $s1,$a0,incremen
+bne $s2,$a1,incremen
 
 jal imprime_cpf
 
-addi $a3, $t0, 44 
-ble $a3, $s0, loopMain
+incremen: 
+addi $t0, $t0, 44 #vai para a próxima linha
+ble $t0, $s0, loopMain
 
+
+li $v0, 10
 lw    $ra, 0($sp)
 addiu $sp, $sp, 4
 syscall
 jr    $ra		 
-
 
 dig_1:
 
@@ -90,9 +91,9 @@ li $t7, 11 #para o calculo do resultado
 #Fim da inicialização de registradores
 
 loop:
-
 lw $t8, CPF($t4) #carrega o valor do CPF no registrador
-sub $t9, $t6, $t4 #10-i
+div $s5, $t4, 4
+sub $t9, $t6, $s5#10-i
 mul $t9, $t8, $t9  #CPF[pos][i]*10-i
 add $t5, $t5, $t9 #somador+=CPF[pos][i]*(10-i);
 
@@ -132,7 +133,8 @@ li $t5,0 #inicializa o somador com 0
 
 loop2:
 lw $t8, CPF($t4)
-sub $t9, $t7, $t4 #11 - i
+div $s5, $t4, 4
+sub $t9, $t7, $s4 #11 - i
 mul $t9, $t8, $t9 #CPF[pos][i]*11-i
 add $t5, $t5,$t9 #somador+=CPF[pos][i]*(11-i); 
 
