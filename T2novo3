@@ -41,7 +41,7 @@ sw    $ra, 0($sp)
 lw $s0, NUM 
 mul $s0, $s0, 44
 sub $s0, $s0, 44 #coloca no início  da ultima linha
-la $t0, 0 #contador das linhas, vai até $s0
+la $t0, -44 #contador das linhas, vai até $s0
 
 
 #Arrumar nona e décima posição
@@ -49,6 +49,7 @@ addi $t2, $t0, 32 #9
 addi $t3, $t0, 36 #10
 
 loopMain:
+addi $t0, $t0, 44 #vai para a próxima linha
 addi $t1, $t0, 44 #final da linha a ser percorrida
 lw $a0, CPF($t2)
 lw $a1, CPF($t3)
@@ -63,8 +64,8 @@ bne $s2,$a1,loopMain
 
 jal imprime_cpf
 
-addi $t0, $t0, 44 #vai para a próxima linha
-ble $t0, $s0, loopMain
+addi $a3, $t0, 44 
+ble $a3, $s0, loopMain
 
 lw    $ra, 0($sp)
 addiu $sp, $sp, 4
@@ -174,7 +175,7 @@ li $t5, 0
 li $t6,0
 li $t7,0
 
-#arruma os valores para o if da lina
+#arruma os valores para o if da linha
 
 addi $t5, $t4, 8  #3 posicao
 addi $t6, $t4, 20  #6 posicao
@@ -191,7 +192,9 @@ beq $t4, $t6, colocarPonto
 beq $t4, $t7, colocarTraco
 
 volta:
-
+addi $t4, $t4, 4
+bne $t4, $t1, loop3
+beq $t4, $t1, fimLoop
 
 colocarPonto:
 la $a0, ponto
@@ -200,10 +203,6 @@ syscall
 j volta
 
 colocarTraco:
-
-addi $t4, $t4, 4
-bne $t4, $t1, loop3
-beq $t4, $t1, fimLoop
 
 la $a0, traco
 li $v0, 4
