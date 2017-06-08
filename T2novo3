@@ -87,17 +87,17 @@ li $a1, 0 #auxiliar
 li $t5, 0 #somador
 li $t6, 10 #para caulculo do somador
 li $t7, 11 #para o calculo do resultado
-
+li $s7, 0 #contador auxiliar
 #Fim da inicialização de registradores
 
 loop:
 lw $t8, CPF($t4) #carrega o valor do CPF no registrador
-div $s5, $t4, 4
-sub $t9, $t6, $s5#10-i
+sub $t9, $t6, $s7#10-i
 mul $t9, $t8, $t9  #CPF[pos][i]*10-i
 add $t5, $t5, $t9 #somador+=CPF[pos][i]*(10-i);
 
 addi $t4, $t4, 4 #i++
+addi $s7, $s7, 1
 bne $t4,$t2,loop #vê se chegou no fim da linha
 
 resultado:
@@ -130,15 +130,17 @@ sw    $ra, 0($sp)
 
 move $t4, $t0 #a linha que estou fazendo o loop
 li $t5,0 #inicializa o somador com 0
+li $s7, 0
 
 loop2:
 lw $t8, CPF($t4)
 div $s5, $t4, 4
-sub $t9, $t7, $s4 #11 - i
+sub $t9, $t7, $s7 #11 - i
 mul $t9, $t8, $t9 #CPF[pos][i]*11-i
 add $t5, $t5,$t9 #somador+=CPF[pos][i]*(11-i); 
 
 addi $t4, $t4, 4 #i++
+addi $s7, $s7, 1
 bne $t4,$t3,loop2 #vê se chegou no fim da linha
 
 valor:
